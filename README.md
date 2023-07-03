@@ -95,5 +95,7 @@ return APIResponseBase<UserProfileData>({
 ```
 
 
-According to ref: https://github.com/dart-lang/sdk/issues/30074, dart does not and will not support class full constructor generics. Fortunately Dart allows passing functions (and constructor) as parameters and even into a constructor. The above solution is hacky yet clean.
+According to ref: https://github.com/dart-lang/sdk/issues/30074, dart does not and will not support class full constructor generics. Fortunately Dart allows passing functions (and constructor) as parameters and even into a constructor. 
+
+By passing the generic class as well as the constructor of that class, the above solution is hacky yet clean.
 
