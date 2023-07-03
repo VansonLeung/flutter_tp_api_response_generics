@@ -30,29 +30,46 @@ Someone asked me:
 
 And here is my solution:
 
-```
-姐係server既所有response都係
-{
-  String message,
-  int statusCode,
-  T data (可以return任何data)
+```dart
+abstract class InnerBaseResponseDataInterface {
+  InnerBaseResponseDataInterface(Map<String, dynamic> json);
 }
 
-我想寫個generic response class, 然後pass返個data type入個generic response class黎減少code repetition.
-如 WebserviceResponse<UserProfile>
-咁個response就會咁樣去parse
-{
-  String message,
-  int statusCode,
-  UserProfile data
+
+class APIResponseBase<T extends InnerBaseResponseDataInterface> {
+  String? status;
+  String? message;
+  T? data;
+
+  APIResponseBase(Map<String, dynamic> json, T Function(Map<String, dynamic>) constructor) {
+    status = json['status'];
+    message = json['message'];
+    data = constructor(json);
+  }
 }
-大家會用咩方法去做到呢個dynamic parsing 😹
+
+
+class UserProfileData extends InnerBaseResponseDataInterface {
+  String? name;
+  String? gender;
+
+  UserProfileData(Map<String, dynamic> json) : super(json) {
+    name = json['data']['status'];
+    gender = json['data']['message'];
+  }
+
+  static parseAsAPIUserProfileResponse(Map<String, dynamic> json) {
+    return APIResponseBase<UserProfileData>(json, UserProfileData.new);
+  }
+}
+
+
 ```
 
 
 Usage:
 
-```
+```dart
 return UserProfileData.parseAsAPIUserProfileResponse({
   "status": "success",
   "message": "ok",
@@ -66,7 +83,7 @@ return UserProfileData.parseAsAPIUserProfileResponse({
 
 Or:
 
-```
+```dart
 return APIResponseBase<UserProfileData>({
   "status": "success",
   "message": "ok",
